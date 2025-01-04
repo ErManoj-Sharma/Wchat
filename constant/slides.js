@@ -1,20 +1,20 @@
 export default [
 {
     id:"1",
-    title:"Tittle 1",
-    description:"desp 1",
-    image:require("./../assets/images/1.jpg")
+    title:"Direct Chats, Zero Hassle",
+    description:"Need to send a quick WhatsApp message? Just type the number and start chatting—no contacts, no clutter.",
+    image:require("./../assets/images/1.png")
 },
 {
     id:"2",
-    title:"tittle 2",
-    description:"desp 2",
-    image: require("./../assets/images/2.jpg")
+    title:"Chat Freely, Save Time",
+    description:"Free yourself from contact-saving! ",
+    image: require("./../assets/images/2.png")
 },
 {
     id:"3",
-    title:"title 3",
-    description:"desp 3",
-    image: require("./../assets/images/3.jpg")
+    title:"Skip the Save, Start the Chat",
+    description:"Easy, quick, and reliable.",
+    image: require("./../assets/images/3.png")
 },
 ]

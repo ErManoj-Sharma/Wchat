@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, Animated } from 'react-native'
+import {  TouchableOpacity, View, Animated } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import Svg, { G, Circle } from 'react-native-svg';
 import { AntDesign } from '@expo/vector-icons';
@@ -32,14 +32,14 @@ const NextButton = ({ percentage, scrollTo }) => {
         }
     }, [])
     return (
-        <View style={styles.container}>
+        <View className="justify-center items-center flex-1" >
             <Svg width={size} height={size}>
                 <G rotation="-90" origin={center}>
                     <Circle  stroke="#f5f6f7" cx={center} cy={center} r={radius} strokeWidth={strokeWidth} />
                     <Circle 
                      fill="white"
                         ref={progressRef}
-                        stroke="#F4338F"
+                        stroke="#008068"
                         cx={center}
                         cy={center}
                         r={radius}
@@ -49,7 +49,7 @@ const NextButton = ({ percentage, scrollTo }) => {
                 </G>
 
             </Svg>
-            <TouchableOpacity onPress={scrollTo} style={styles.button} activeOpacity={0.6}>
+            <TouchableOpacity onPress={scrollTo} className="absolute bg-green p-5 rounded-full"  activeOpacity={0.6}>
                 <AntDesign name='arrowright' size={32} color="#fff" />
             </TouchableOpacity>
         </View>
@@ -57,17 +57,3 @@ const NextButton = ({ percentage, scrollTo }) => {
 }
 
 export default NextButton
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    button: {
-        position: 'absolute',
-        backgroundColor: "#f4338f",
-        borderRadius: 100,
-        padding: 20
-    }
-})
