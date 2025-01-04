@@ -15,3 +15,36 @@ npx create-expo-app@latest --template blank
 ```
 npx expo install react-dom react-native-web @expo/metro-runtime
 ```
+# add expo router
+https://docs.expo.dev/router/installation/#manual-installation
+```
+npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar
+```
+```javascript
+// package.json
+{
+  "main": "expo-router/entry"
+}
+```
+```json
+// app.json
+{
+  "scheme": "your-app-scheme"
+}
+```
+```
+npx expo install react-native-web react-dom
+```
+```javascript
+// babel.config.js
+module.exports = function (api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+  };
+};
+```
+```javascript
+// Restart server
+npx expo start --tunnel --clear
+```
