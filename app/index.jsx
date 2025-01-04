@@ -8,8 +8,7 @@ export default function App() {
   return (
     <View className="flex-1 bg-pink-400 items-center justify-center">
       <Text>This file in app/index.js</Text>
-      <Link href="/bills"> <Text>Jump to bills</Text></Link>
-      <Link href="/bills"> <Text>Jump to bills</Text></Link> 
+      <Link href="/home"> <Text>Jump to Home</Text></Link>
       <ActivityIndicator animating={true} color={MD2Colors.red800} />
       <StatusBar style="auto" />
     </View>
