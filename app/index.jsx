@@ -1,16 +1,41 @@
-import { Link } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
 import * as React from 'react';
-import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import { useState, useEffect } from 'react';
+import { Text, View } from 'react-native';
+import Onboarding from '../components/Onboarding';
+import Home from './(tabs)/home';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActivityIndicator } from 'react-native-paper';
+const Loading = () => {
+  <View>
+    <ActivityIndicator size="large" />
+  </View>
+}
 export default function App() {
+  const [loading, setLoading] = useState(true)
+  const [viewOnboarding, setViewOnboarding] = useState(false)
+
+  const checkOnBoarding = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@viewedOnboarding')
+
+      if (value !== null) {
+        setViewOnboarding(true)
+      }
+    } catch (error) {
+      console.log("Error: @checkOnboarding -> ", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(()=>{
+    checkOnBoarding()
+  },[])
   return (
-    <View className="flex-1 bg-pink-400 items-center justify-center">
-      <Text>This file in app/index.js</Text>
-      <Link href="/home"> <Text>Jump to Home</Text></Link>
-      <ActivityIndicator animating={true} color={MD2Colors.red800} />
-      <StatusBar style="auto" />
+    <View className="flex-1  items-center justify-center">
+      {loading ? <Loading /> : viewOnboarding ? <Home /> : <Onboarding />
+
+      }
     </View>
   );
 }
