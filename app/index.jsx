@@ -5,12 +5,14 @@ import Onboarding from '../components/Onboarding';
 import Home from './(tabs)/home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 const Loading = () => {
   <View>
     <ActivityIndicator size="large" />
   </View>
 }
 export default function App() {
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [viewOnboarding, setViewOnboarding] = useState(false)
 
@@ -33,7 +35,7 @@ export default function App() {
   },[])
   return (
     <View className="flex-1  items-center justify-center">
-      {loading ? <Loading /> : viewOnboarding ? <Home /> : <Onboarding />
+      {loading ? <Loading /> : viewOnboarding ? (router.push("/home")) : <Onboarding />
 
       }
     </View>

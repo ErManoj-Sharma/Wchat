@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { storeDataWithTimestamp } from '../../../service/storage';
 const Home = () => {
     const router = useRouter();
     const clearOnboarding = async () => {
@@ -30,18 +31,24 @@ const Home = () => {
     }, []);
     const [number, setNumber] = useState("");
     const [isValid, setIsValid] = useState(false);
-  
+
     const { colors } = useTheme(); // Use theme for custom colors
-  
-    const handleChatNow = async() => {
+
+    const handleChatNow = async () => {
         console.log(number)
         url = `https://api.whatsapp.com/send/?phone=%2B91${number}&text&type=phone_number&app_absent=0`
         const supported = await Linking.canOpenURL(url);
         if (supported) {
+            try {
+                await storeDataWithTimestamp('@recent-chat-data', { number: number });
+                // Update UI or state after successful storage
+            } catch (error) {
+                console.error("Error storing data:", error);
+            }
             await Linking.openURL(url);
-          } else {
+        } else {
             console.warn(`Don't know how to open URI: ${url}`);
-          }
+        }
     }
 
     const handleNumberChange = (num) => {
@@ -63,7 +70,7 @@ const Home = () => {
                 mode='outlined'
                 onChangeText={handleNumberChange}
                 keyboardType="numeric"
-              
+
                 theme={{
                     colors: {
                         primary: '#00a884', // Custom color for input focus
@@ -76,7 +83,7 @@ const Home = () => {
                 style={{ width: '100%' }}
             />
             <Br />
-            <Button icon="chat" buttonColor='#00a884' textColor='white' mode="elevated"  color={isValid ? '#00a884' : '#aaa'} disabled={!isValid} onPress={handleChatNow}>
+            <Button icon="chat" buttonColor='#00a884' textColor='white' mode="elevated" color={isValid ? '#00a884' : '#aaa'} disabled={!isValid} onPress={handleChatNow}>
                 Chat Now
             </Button>
 

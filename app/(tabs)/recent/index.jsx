@@ -1,12 +1,10 @@
-import { View, Text, Button } from 'react-native'
+import { View } from 'react-native'
 import React from 'react'
-import { useRouter } from 'expo-router'
-
+import RecentList from '../../../components/RecentList'
 const page = () => {
-    const router = useRouter();
     return (
-        <View>
-            <Text>Recent index page</Text>
+        <View className="bg-white">
+            <RecentList/>
         </View>
     )
 }

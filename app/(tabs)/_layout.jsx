@@ -23,6 +23,7 @@ export default function TabLayout() {
         name="recent"
         options={({ route }) => ({
           title: 'Recent',
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <MaterialIcons
               name={focused ? "history" : "history"}
