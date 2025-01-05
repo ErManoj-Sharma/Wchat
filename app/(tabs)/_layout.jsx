@@ -1,17 +1,38 @@
 import { Tabs } from 'expo-router';
-import { Image  } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 export default function TabLayout() {
   return (
-    <Tabs>
+    <Tabs
+    >
       <Tabs.Screen
         name="home"
-        options={{ title: 'home',
-          headerShown: false ,
-          }} // Hide header for home tab
+        options={{
+          title: 'Chats',
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? 'chatbubbles' : 'chatbubbles-outline'}
+              size={24}
+              color={focused ? '#008068' : 'gray'} />),
+          tabBarActiveTintColor: '#008068'
+
+        }}
       />
       <Tabs.Screen
         name="recent"
-        options={{ title: 'recent', headerShown: false }} // Hide header for Exam and Jobs tab
+        options={({ route }) => ({
+          title: 'Recent',
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons
+              name={focused ? "history" : "history"}
+              size={24}
+              color={focused ? '#008068' : 'gray'}
+            />
+          ),
+          tabBarActiveTintColor: '#008068'
+
+        })}
       />
     </Tabs>
   );

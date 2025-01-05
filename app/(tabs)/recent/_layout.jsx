@@ -1,0 +1,17 @@
+import React from 'react'
+import { Stack } from 'expo-router'
+
+const StackLayout = () => {
+  return (
+    <Stack>
+        <Stack.Screen
+        name='index'
+        options={{
+            headerTitle:"Recent Chats"
+        }}
+        />        
+    </Stack>
+  )
+}
+
+export default StackLayout
