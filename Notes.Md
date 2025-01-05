@@ -162,3 +162,21 @@ app/_layout.js
 // Import your global CSS file
 import "../global.css";
 ```
+# expo app to apk build
+```
+npm install -g eas-cli
+```
+```
+// Login expo account
+eas login
+```
+```
+eas build:configure
+```
+```
+eas build --platform android
+```
+```javascript
+// preview build - it can be downloaded as apk
+eas build -p android --profile preview 
+```
