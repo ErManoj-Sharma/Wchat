@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router'
 import { useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { storeDataWithTimestamp } from '../../../service/storage';
+import * as IntentLauncher from 'expo-intent-launcher';
 const Home = () => {
     const [debugInfo, setDebugInfo] = useState(""); // Debug info storage
     const [debugVisible, setDebugVisible] = useState(true); // Control debug view visibility
@@ -40,39 +41,64 @@ const Home = () => {
     const handleChatNow = async () => {
         console.log(number)
         setDebugInfo((prev) => `${prev}\n number is ${number}`)
-        const url = `https://api.whatsapp.com/send/?phone=%2B91${number}&text&type=phone_number&app_absent=0`
-        setDebugInfo((prev) => `${prev}\nGenerated URL: ${url}`);
+        // const url = `https://api.whatsapp.com/send/?phone=%2B91${number}&text&type=phone_number&app_absent=0`
 
-        let supported = false;
-        try {
-            supported = await Linking.canOpenURL(url);
-            setDebugInfo((prev) => `${prev}\nCan Open URL: ${supported}`);
-        } catch (error) {
-            console.error("Error checking URL support:", error);
-            setDebugInfo((prev) => `${prev}\nError checking URL support: ${error.message}`);
-        }
+        // let supported = false;
+        // try {
+        //     supported = await Linking.canOpenURL(url);
+        //     setDebugInfo((prev) => `${prev}\nCan Open URL: ${supported}`);
+        // } catch (error) {
+        //     console.error("Error checking URL support:", error);
+        //     setDebugInfo((prev) => `${prev}\nError checking URL support: ${error.message}`);
+        // }
         
-        setDebugInfo((prev) => `${prev}\nCan Open URL: ${supported}`);
-        if (supported) {
-            try {
-                await storeDataWithTimestamp('@recent-chat-data', { number: number });
-                setDebugInfo((prev) => `${prev}\nData saved successfully`);
-                // Update UI or state after successful storage
-            } catch (error) {
-                console.error("Error storing data:", error);
-                setDebugInfo((prev) => `${prev}\ndata didn't saved`);
+        const phoneNumber = encodeURIComponent(`+91${number}`);
+        const url = `https://api.whatsapp.com/send/?phone=${phoneNumber}&text&type=phone_number&app_absent=0`;
+        setDebugInfo((prev) => `${prev}\nGenerated URL: ${url}`);
+    
+        try {
+            // Check if URL is supported
+            const supported = await Linking.canOpenURL(url);
+            setDebugInfo((prev) => `${prev}\nCan Open URL: ${supported}`);
+            if (supported) {
+                // Open the WhatsApp URL using Intent Launcher
+                await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+                    data: url,
+                    package: "com.whatsapp",
+                    type: "text/plain",  // Optional: MIME type to help with URL handling
+                });
+                setDebugInfo((prev) => `${prev}\nWhatsApp opened`);
+                console.log('WhatsApp opened successfully');
+            } else {
+                console.warn('WhatsApp cannot handle this URL');
+                setDebugInfo((prev) => `${prev}\nWhatsApp cannot handle this URL`);
             }
-            try {
-                await Linking.openURL(url);
-                setDebugInfo((prev) => `${prev}\nWhatsApp opened successfully`);
-            } catch (error) {
-                console.error("Error opening WhatsApp:", error);
-                setDebugInfo(`Error opening WhatsApp: ${error.message}`);
-            }
-        } else {
-            console.warn(`Can't handle URL: ${url}`);
-            setDebugInfo((prev) => `${prev}\nCan't handle URL`);
+        } catch (error) {
+            console.error('Error opening WhatsApp:', error);
+            setDebugInfo((prev) => `${prev}\nError: ${error.message}`);
         }
+
+        setDebugInfo((prev) => `${prev}\nCan Open URL: `);
+        // if (supported) {
+        //     try {
+        //         await storeDataWithTimestamp('@recent-chat-data', { number: number });
+        //         setDebugInfo((prev) => `${prev}\nData saved successfully`);
+        //         // Update UI or state after successful storage
+        //     } catch (error) {
+        //         console.error("Error storing data:", error);
+        //         setDebugInfo((prev) => `${prev}\ndata didn't saved`);
+        //     }
+        //     try {
+        //         await Linking.openURL(url);
+        //         setDebugInfo((prev) => `${prev}\nWhatsApp opened successfully`);
+        //     } catch (error) {
+        //         console.error("Error opening WhatsApp:", error);
+        //         setDebugInfo(`Error opening WhatsApp: ${error.message}`);
+        //     }
+        // } else {
+        //     console.warn(`Can't handle URL: ${url}`);
+        //     setDebugInfo((prev) => `${prev}\nCan't handle URL`);
+        // }
     }
 
     const handleNumberChange = (num) => {
