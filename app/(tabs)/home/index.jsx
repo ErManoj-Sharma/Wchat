@@ -1,4 +1,4 @@
-import { View, BackHandler } from 'react-native'
+import { View, BackHandler,StyleSheet, Text } from 'react-native'
 import { Linking } from 'react-native';
 import * as React from 'react';
 import { TextInput, Button, Snackbar } from 'react-native-paper';
@@ -8,26 +8,16 @@ import { useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { storeDataWithTimestamp } from '../../../service/storage';
 const Home = () => {
-    const router = useRouter();
-    const clearOnboarding = async () => {
-        try {
-            await AsyncStorage.removeItem('@viewedOnboarding')
-        } catch (error) {
-            console.log("Error: @clearOnboarding -> ", error)
-        }
-    }
+    const [debugInfo, setDebugInfo] = useState(""); // Debug info storage
+    const [debugVisible, setDebugVisible] = useState(true); // Control debug view visibility
 
-    const [snackVisible, setSnackVisible] = useState(false);
-    const [snackText, setSnackText] = useState('');
-
-    const showSnack = (text) => {
-        setSnackText(text);
-        setSnackVisible(true);
-    };
-
-    const onDismissSnackBar = () => {
-        setSnackVisible(false);
-    };
+    // const clearOnboarding = async () => {
+    //     try {
+    //         await AsyncStorage.removeItem('@viewedOnboarding')
+    //     } catch (error) {
+    //         console.log("Error: @clearOnboarding -> ", error)
+    //     }
+    // }
 
     useEffect(() => {
         const handleBackPress = () => {
@@ -49,53 +39,40 @@ const Home = () => {
 
     const handleChatNow = async () => {
         console.log(number)
+        setDebugInfo((prev) => `${prev}\n number is ${number}`)
+        const url = `https://api.whatsapp.com/send/?phone=%2B91${number}&text&type=phone_number&app_absent=0`
+        setDebugInfo((prev) => `${prev}\nGenerated URL: ${url}`);
 
-        showSnack(`Number: ${number}`);
-        // console.log("testing with google")
-        // const s = await Linking.canOpenURL("https://google.com");
-        // if (s){
-        //     await Linking.openURL("https://google.com");
-        // }
-        // console.log("testing with google")
-        url = `https://api.whatsapp.com/send/?phone=%2B91${number}&text&type=phone_number&app_absent=0`
-        showSnack(`URL: ${url}`);
-        const supported = await Linking.canOpenURL(url);
-        showSnack(`Supported: ${supported}`);
+        let supported = false;
+        try {
+            supported = await Linking.canOpenURL(url);
+            setDebugInfo((prev) => `${prev}\nCan Open URL: ${supported}`);
+        } catch (error) {
+            console.error("Error checking URL support:", error);
+            setDebugInfo((prev) => `${prev}\nError checking URL support: ${error.message}`);
+        }
+        
+        setDebugInfo((prev) => `${prev}\nCan Open URL: ${supported}`);
         if (supported) {
             try {
                 await storeDataWithTimestamp('@recent-chat-data', { number: number });
-                showSnack(`Data saved`);
+                setDebugInfo((prev) => `${prev}\nData saved successfully`);
                 // Update UI or state after successful storage
             } catch (error) {
                 console.error("Error storing data:", error);
-                showSnack(`Error saving data: ${error.message}`);
+                setDebugInfo((prev) => `${prev}\ndata didn't saved`);
             }
-            Snack(`Linking Whatsapp`)
-            await Linking.openURL(url);
-            showSnack(`WhatsApp opened`);
+            try {
+                await Linking.openURL(url);
+                setDebugInfo((prev) => `${prev}\nWhatsApp opened successfully`);
+            } catch (error) {
+                console.error("Error opening WhatsApp:", error);
+                setDebugInfo(`Error opening WhatsApp: ${error.message}`);
+            }
         } else {
-            console.warn(`Don't know how to open URI: ${url}`);
-            showSnack(`Error opening WhatsApp: ${error.message}`);
+            console.warn(`Can't handle URL: ${url}`);
+            setDebugInfo((prev) => `${prev}\nCan't handle URL`);
         }
-
-        return (
-            <View>
-                {/* Snackbar */}
-                <Snackbar
-                    visible={snackVisible}
-                    onDismiss={onDismissSnackBar}
-                    duration={2000}
-                    action={{
-                        label: 'Undo',
-                        onPress: () => {
-                            // Handle undo action
-                        },
-                    }}
-                >
-                    {snackText}
-                </Snackbar>
-            </View>
-        );
     }
 
     const handleNumberChange = (num) => {
@@ -109,21 +86,6 @@ const Home = () => {
     };
 
     const Br = () => <View style={{ height: 10 }} />;
-    const Snack = (text) => <View><Snackbar
-        visible={true}
-        onDismiss={onDismissSnackBar}
-        duration={500}
-        elevation={5}
-        action={{
-            label: 'Undo',
-            onPress: () => {
-                // Do something
-            },
-        }}>
-        {text}
-    </Snackbar>
-    </View>
-
 
     return (
         <View className="flex-1 justify-center items-center p-4 bg-white">
@@ -149,9 +111,38 @@ const Home = () => {
             <Button icon="chat" buttonColor='#00a884' textColor='white' mode="elevated" color={isValid ? '#00a884' : '#aaa'} disabled={!isValid} onPress={handleChatNow}>
                 Chat Now
             </Button>
+             {/* Conditionally Render Debug View */}
+             {debugVisible && (
+                <View style={styles.debugContainer}>
+                    <Text style={styles.debugText}>Debug Information:</Text>
+                    <Text style={styles.debugText}>{debugInfo}</Text>
+                </View>
+            )}
 
         </View>
     )
 }
 
 export default Home
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 16,
+    },
+    debugContainer: {
+        marginTop: 20,
+        padding: 10,
+        backgroundColor: "#f9f9f9",
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#ddd",
+        width: "90%",
+    },
+    debugText: {
+        fontSize: 12,
+        color: "#444",
+    },
+});
