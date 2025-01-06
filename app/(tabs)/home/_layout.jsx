@@ -5,25 +5,24 @@ const StackLayout = () => {
     return (
         <Stack
             screenOptions={{
-                headerTitleAlign: "center",
                 headerStyle: {
                     backgroundColor: "#fff",
                     shadowColor: "#3ddb92",
-                    backgroundColor: "#008068",
+                    backgroundColor: "#fff",
 
 
                 },
                 headerTitleStyle: {
-                    fontSize: 18,
+                    fontSize: 24,
                     fontWeight: "bold",
-                    color: "#fff"
+                    color: "#008068"
                 },
                 headerShown: true
             }}>
             <Stack.Screen
                 name='index'
                 options={{
-                    title: "Enter Number"
+                    title: "WhatsApp Direct Chat"
 
                 }}
             />
