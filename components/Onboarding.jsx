@@ -1,5 +1,4 @@
-import { View, FlatList, Animated } from 'react-native'
-import { SafeAreaView, StatusBar } from 'react-native';
+import { SafeAreaView, StatusBar, View, FlatList, Animated } from 'react-native';
 import React, { useState, useRef } from 'react'
 import slides from '../constant/slides'
 import OnboardingItem from './OnboardingItem'
