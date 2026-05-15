@@ -1,4 +1,4 @@
-// app/_layout.jsx
+// app/_layout.jsx 
 
 import React from "react";
 
@@ -35,11 +35,11 @@ export default function RootLayout() {
                 }}
             >
                 <Stack.Screen
-                    name="(tabs)"
+                    name="(tabs)" options={{ headerShown: false }}
                 />
 
                 <Stack.Screen
-                    name="index"
+                    name="index" options={{ headerShown: false }}
                 />
             </Stack>
         </PaperProvider>

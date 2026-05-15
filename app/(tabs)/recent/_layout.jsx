@@ -22,7 +22,7 @@ const StackLayout = () => {
       <Stack.Screen
         name='index'
         options={{
-          headerTitle: "Recent Chats",
+          headerTitle: "Recent Chats", headerShown: false
         }}
       />
     </Stack>
