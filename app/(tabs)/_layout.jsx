@@ -11,21 +11,53 @@ const WHATSAPP_GREEN = "#008068";
 
 const LightTheme = {
   colors: {
+    background: "#F8FAFC",
     surface: "#FFFFFF",
+
     text: "#0F172A",
+
     outline: "#E5E7EB",
-    onSurfaceVariant: "gray",
-    primary: WHATSAPP_GREEN,
+
+    onSurfaceVariant:
+      "#64748B",
+
+    primary:
+      WHATSAPP_GREEN,
+
+    card: "#FFFFFF",
+
+    inputBackground:
+      "#FFFFFF",
   },
 };
 
 const DarkTheme = {
   colors: {
-    surface: "#1F2937",
+    // Main backgrounds
+    background: "#0F172A",
+
+    surface: "#111827",
+
+    // Main text
     text: "#F9FAFB",
+
+    // Borders
     outline: "#374151",
-    onSurfaceVariant: "#9CA3AF",
-    primary: WHATSAPP_GREEN,
+
+    // Secondary text
+    onSurfaceVariant:
+      "#9CA3AF",
+
+    // Brand
+    primary:
+      WHATSAPP_GREEN,
+
+    // Cards
+    card: "#1E293B",
+
+    // Inputs
+    inputBackground:
+      "#111827",
   },
 };
 

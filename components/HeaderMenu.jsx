@@ -27,7 +27,7 @@ const HeaderMenu = ({ theme, isDark, toggleTheme }) => {
                             style={{
                                 width: 22,
                                 height: 22,
-                                tintColor: isDark ? "#ffffff" : WHATSAPP_GREEN
+                                tintColor: isDark ? WHATSAPP_GREEN : WHATSAPP_GREEN
                             }}
                         />
                     </TouchableOpacity>

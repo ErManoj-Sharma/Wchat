@@ -1,5 +1,3 @@
-// components/RecentList.jsx
-
 import React, {
     useCallback,
     useEffect,
@@ -7,7 +5,9 @@ import React, {
     useRef,
     useState,
 } from "react";
+
 import { useFocusEffect } from "expo-router";
+
 import {
     View,
     Text,
@@ -18,6 +18,7 @@ import {
     Alert,
     Animated,
     Platform,
+    useColorScheme,
 } from "react-native";
 
 import {
@@ -37,138 +38,121 @@ import {
     saveRecentChat,
 } from "../service/storage";
 
-// ─────────────────────────────────────────
-// Constants
-// ─────────────────────────────────────────
-
 const WHATSAPP_GREEN = "#00A884";
 
-const COLORS = {
-    bg: "#FFFFFF",
-    surface: "#F3F4F6",
-    border: "#E5E7EB",
-    primary: WHATSAPP_GREEN,
-    text: "#111827",
-    subtext: "#6B7280",
-    danger: "#DC2626",
-    avatarBg: "#ECECEC",
-    avatarIcon: "#6B7280",
-    overlay: "rgba(0,0,0,0.45)",
-    modalBg: "#FFFFFF",
-    inputBorder: "#D1D5DB",
-    inputFocus: WHATSAPP_GREEN,
-    skeleton: "#E5E7EB",
-};
-
-// ─────────────────────────────────────────
-// Save Contact Modal — removed.
-// Android uses native INSERT Intent directly;
-// iOS uses expo-contacts. No modal needed.
-// ─────────────────────────────────────────
-
-// ─────────────────────────────────────────
-// Skeleton Loader
-// ─────────────────────────────────────────
-
-const SkeletonItem = () => {
-    const anim = useRef(new Animated.Value(0.4)).current;
-
-    useEffect(() => {
-        Animated.loop(
-            Animated.sequence([
-                Animated.timing(anim, {
-                    toValue: 1,
-                    duration: 800,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(anim, {
-                    toValue: 0.4,
-                    duration: 800,
-                    useNativeDriver: true,
-                }),
-            ])
-        ).start();
-    }, []);
-
-    return (
-        <Animated.View
-            style={{
-                marginHorizontal: 12,
-                marginBottom: 10,
-                backgroundColor: COLORS.surface,
-                borderRadius: 22,
-                paddingHorizontal: 14,
-                paddingVertical: 14,
-                flexDirection: "row",
-                alignItems: "center",
-                opacity: anim,
-            }}
-        >
-            <View
-                style={{
-                    width: 58,
-                    height: 58,
-                    borderRadius: 29,
-                    backgroundColor: COLORS.skeleton,
-                }}
-            />
-            <View style={{ flex: 1, marginLeft: 14, gap: 10 }}>
-                <View
-                    style={{
-                        width: "60%",
-                        height: 18,
-                        borderRadius: 8,
-                        backgroundColor: COLORS.skeleton,
-                    }}
-                />
-                <View
-                    style={{
-                        width: "40%",
-                        height: 13,
-                        borderRadius: 6,
-                        backgroundColor: COLORS.skeleton,
-                    }}
-                />
-            </View>
-            <View
-                style={{
-                    width: 60,
-                    height: 13,
-                    borderRadius: 6,
-                    backgroundColor: COLORS.skeleton,
-                }}
-            />
-        </Animated.View>
-    );
-};
-
-// ─────────────────────────────────────────
-// Main Component
-// ─────────────────────────────────────────
-
 const RecentList = () => {
-    const [recentChats, setRecentChats] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [menuVisible, setMenuVisible] = useState(null);
-    // saveModal state removed — Intent fires directly
-    const [toast, setToast] = useState({ visible: false, message: "" });
-    const toastTimer = useRef(null);
+    const colorScheme =
+        useColorScheme();
+
+    const isDark =
+        colorScheme === "dark";
+
+    // ─────────────────────────────
+    // Theme
+    // ─────────────────────────────
+
+    const COLORS = {
+        bg: isDark
+            ? "#0F172A"
+            : "#FFFFFF",
+
+        surface: isDark
+            ? "#1E293B"
+            : "#F3F4F6",
+
+        border: isDark
+            ? "#334155"
+            : "#E5E7EB",
+
+        primary:
+            WHATSAPP_GREEN,
+
+        text: isDark
+            ? "#F8FAFC"
+            : "#111827",
+
+        subtext: isDark
+            ? "#94A3B8"
+            : "#6B7280",
+
+        danger: "#EF4444",
+
+        avatarBg: isDark
+            ? "#111827"
+            : "#ECECEC",
+
+        avatarIcon: isDark
+            ? "#CBD5E1"
+            : "#6B7280",
+
+        skeleton: isDark
+            ? "#1E293B"
+            : "#E5E7EB",
+
+        toastBg: isDark
+            ? "#020617"
+            : "#1F2937",
+    };
+
+    // ─────────────────────────────
+    // State
+    // ─────────────────────────────
+
+    const [recentChats, setRecentChats] =
+        useState([]);
+
+    const [loading, setLoading] =
+        useState(true);
+
+    const [menuVisible, setMenuVisible] =
+        useState(null);
+
+    const [toast, setToast] =
+        useState({
+            visible: false,
+            message: "",
+        });
+
+    const toastTimer =
+        useRef(null);
 
     // ─────────────────────────────
     // Toast
     // ─────────────────────────────
 
-    const showToast = useCallback((message) => {
-        if (toastTimer.current) clearTimeout(toastTimer.current);
-        setToast({ visible: true, message });
-        toastTimer.current = setTimeout(() => {
-            setToast({ visible: false, message: "" });
-        }, 2500);
-    }, []);
+    const showToast =
+        useCallback((message) => {
+            if (
+                toastTimer.current
+            ) {
+                clearTimeout(
+                    toastTimer.current
+                );
+            }
+
+            setToast({
+                visible: true,
+                message,
+            });
+
+            toastTimer.current =
+                setTimeout(() => {
+                    setToast({
+                        visible: false,
+                        message: "",
+                    });
+                }, 2000);
+        }, []);
 
     useEffect(() => {
         return () => {
-            if (toastTimer.current) clearTimeout(toastTimer.current);
+            if (
+                toastTimer.current
+            ) {
+                clearTimeout(
+                    toastTimer.current
+                );
+            }
         };
     }, []);
 
@@ -176,49 +160,99 @@ const RecentList = () => {
     // Menu
     // ─────────────────────────────
 
-    const openMenu = useCallback((id) => setMenuVisible(id), []);
-    const closeMenu = useCallback(() => setMenuVisible(null), []);
+    const openMenu =
+        useCallback((id) => {
+            setMenuVisible(id);
+        }, []);
+
+    const closeMenu =
+        useCallback(() => {
+            setMenuVisible(null);
+        }, []);
 
     // ─────────────────────────────
-    // Deduplication
+    // Remove Duplicates
     // ─────────────────────────────
 
-    const removeDuplicateChats = useCallback((chats = []) => {
-        const latestMap = new Map();
+    const removeDuplicateChats =
+        useCallback(
+            (chats = []) => {
+                const latestMap =
+                    new Map();
 
-        chats.forEach((chat) => {
-            const existing = latestMap.get(chat.number);
-            if (
-                !existing ||
-                new Date(chat.timestamp) > new Date(existing.timestamp)
-            ) {
-                latestMap.set(chat.number, chat);
-            }
-        });
+                chats.forEach(
+                    (chat) => {
+                        const existing =
+                            latestMap.get(
+                                chat.number
+                            );
 
-        return Array.from(latestMap.values()).sort(
-            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+                        if (
+                            !existing ||
+                            new Date(
+                                chat.timestamp
+                            ) >
+                            new Date(
+                                existing.timestamp
+                            )
+                        ) {
+                            latestMap.set(
+                                chat.number,
+                                chat
+                            );
+                        }
+                    }
+                );
+
+                return Array.from(
+                    latestMap.values()
+                ).sort(
+                    (a, b) =>
+                        new Date(
+                            b.timestamp
+                        ) -
+                        new Date(
+                            a.timestamp
+                        )
+                );
+            },
+            []
         );
-    }, []);
 
     // ─────────────────────────────
     // Fetch Chats
     // ─────────────────────────────
 
-    const fetchChats = useCallback(async () => {
-        try {
-            setLoading(true);
-            const data = await getDataWithTimestamp("@recent-chat-data");
-            // ✅ Fixed: deduplication result is now actually used
-            setRecentChats(
-                removeDuplicateChats(Array.isArray(data) ? data : [])
-            );
-        } catch (error) {
-            console.log("Recent chats error:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, [removeDuplicateChats]);
+    const fetchChats =
+        useCallback(async () => {
+            try {
+                setLoading(true);
+
+                const data =
+                    await getDataWithTimestamp(
+                        "@recent-chat-data"
+                    );
+
+                setRecentChats(
+                    removeDuplicateChats(
+                        Array.isArray(
+                            data
+                        )
+                            ? data
+                            : []
+                    )
+                );
+            } catch (error) {
+                console.log(
+                    "Recent chats error:",
+                    error
+                );
+            } finally {
+                setLoading(false);
+            }
+        }, [
+            removeDuplicateChats,
+        ]);
 
     useFocusEffect(
         useCallback(() => {
@@ -227,181 +261,426 @@ const RecentList = () => {
     );
 
     // ─────────────────────────────
-    // Sorted Chats (already deduped)
+    // Sorted Chats
     // ─────────────────────────────
 
-    const sortedChats = useMemo(() => {
-        return [...recentChats].sort(
-            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-        );
-    }, [recentChats]);
+    const sortedChats =
+        useMemo(() => {
+            return [
+                ...recentChats,
+            ].sort(
+                (a, b) =>
+                    new Date(
+                        b.timestamp
+                    ) -
+                    new Date(
+                        a.timestamp
+                    )
+            );
+        }, [recentChats]);
 
     // ─────────────────────────────
     // Format Date
     // ─────────────────────────────
 
-    const formatDate = useCallback((iso) => {
-        const date = new Date(iso);
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
+    const formatDate =
+        useCallback((iso) => {
+            const date =
+                new Date(iso);
 
-        if (date.toDateString() === today.toDateString()) return "Today";
-        if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+            const today =
+                new Date();
 
-        return date.toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-        });
-    }, []);
+            const yesterday =
+                new Date(today);
+
+            yesterday.setDate(
+                today.getDate() -
+                1
+            );
+
+            if (
+                date.toDateString() ===
+                today.toDateString()
+            )
+                return "Today";
+
+            if (
+                date.toDateString() ===
+                yesterday.toDateString()
+            )
+                return "Yesterday";
+
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                }
+            );
+        }, []);
 
     // ─────────────────────────────
-    // Open WhatsApp
+    // Open Chat
     // ─────────────────────────────
 
-    const openChat = useCallback(async (number) => {
-        try {
-            const updated = await saveRecentChat(number);
-            setRecentChats(removeDuplicateChats(updated));
+    const openChat =
+        useCallback(
+            async (number) => {
+                try {
+                    const updated =
+                        await saveRecentChat(
+                            number
+                        );
 
-            const url = `https://wa.me/91${number}`;
-            await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-                data: url,
-                package: "com.whatsapp",
-            });
-        } catch (error) {
-            console.log("WhatsApp launch failed:", error);
-            Linking.openURL(`https://wa.me/91${number}`);
-        }
-    }, [removeDuplicateChats]);
+                    setRecentChats(
+                        removeDuplicateChats(
+                            updated
+                        )
+                    );
+
+                    const url =
+                        `https://wa.me/91${number}`;
+
+                    await IntentLauncher.startActivityAsync(
+                        "android.intent.action.VIEW",
+                        {
+                            data: url,
+                            package:
+                                "com.whatsapp",
+                        }
+                    );
+                } catch (error) {
+                    console.log(
+                        error
+                    );
+
+                    Linking.openURL(
+                        `https://wa.me/91${number}`
+                    );
+                }
+            },
+            [
+                removeDuplicateChats,
+            ]
+        );
 
     // ─────────────────────────────
     // Copy Number
     // ─────────────────────────────
 
-    const copyNumber = useCallback(async (number) => {
-        await Clipboard.setStringAsync(number);
-        showToast("Number copied to clipboard");
-    }, [showToast]);
+    const copyNumber =
+        useCallback(
+            async (number) => {
+                await Clipboard.setStringAsync(
+                    number
+                );
+
+                showToast(
+                    "Number copied"
+                );
+            },
+            [showToast]
+        );
 
     // ─────────────────────────────
     // Save Contact
     // ─────────────────────────────
 
-    // ─────────────────────────────
-    // Save Contact (direct Intent)
-    // ─────────────────────────────
+    const saveToContacts =
+        useCallback(
+            async (number) => {
+                const fullNumber =
+                    `+91${number}`;
 
-    const saveToContacts = useCallback(async (number) => {
-        const fullNumber = `+91${number}`;
-        try {
-            if (Platform.OS === "android") {
-                // Use tel: URI with Linking — Android shows a bottom sheet
-                // letting the user "Add to contacts", opening the system
-                // contacts UI with the number pre-filled. Works on all
-                // Android versions; no permissions, no cloud conflict.
-                // The official IntentLauncherParams type only supports `extra`
-                // (not extraString/extraInt — those don't exist in the API).
-                // Keys must be the actual resolved string values of the Android
-                // constants, not the Java constant names.
-                // ContactsContract.Intents.Insert.PHONE resolves to "phone"
-                // ContactsContract.Intents.Insert.PHONE_TYPE resolves to "phone_type"
-                await IntentLauncher.startActivityAsync(
-                    "android.intent.action.INSERT",
-                    {
-                        type: "vnd.android.cursor.dir/contact",
-                        extra: {
-                            phone: fullNumber,
-                            phone_type: "2", // pass as string to avoid Double cast bug
-                        },
+                try {
+                    if (
+                        Platform.OS ===
+                        "android"
+                    ) {
+                        await IntentLauncher.startActivityAsync(
+                            "android.intent.action.INSERT",
+                            {
+                                type: "vnd.android.cursor.dir/contact",
+
+                                extra: {
+                                    phone:
+                                        fullNumber,
+
+                                    phone_type:
+                                        "2",
+                                },
+                            }
+                        );
+                    } else {
+                        const {
+                            status,
+                        } =
+                            await Contacts.requestPermissionsAsync();
+
+                        if (
+                            status !==
+                            "granted"
+                        ) {
+                            Alert.alert(
+                                "Permission denied"
+                            );
+
+                            return;
+                        }
+
+                        await Contacts.addContactAsync(
+                            {
+                                [Contacts.Fields.PhoneNumbers]:
+                                    [
+                                        {
+                                            number:
+                                                fullNumber,
+
+                                            label:
+                                                "mobile",
+                                        },
+                                    ],
+                            }
+                        );
+
+                        showToast(
+                            "Contact saved"
+                        );
                     }
-                );
-            } else {
-                // iOS — expo-contacts silently saves without UI
-                const { status } = await Contacts.requestPermissionsAsync();
-                if (status !== "granted") {
-                    Alert.alert(
-                        "Permission Denied",
-                        "Please allow contact access in Settings to save contacts."
+                } catch (error) {
+                    console.log(
+                        error
                     );
-                    return;
+
+                    Alert.alert(
+                        "Error",
+                        "Could not open contacts."
+                    );
                 }
-                await Contacts.addContactAsync({
-                    [Contacts.Fields.PhoneNumbers]: [
-                        { number: fullNumber, label: "mobile" },
-                    ],
-                });
-                showToast("Contact saved");
-            }
-        } catch (error) {
-            console.log("saveToContacts error:", error);
-            Alert.alert("Error", "Could not open contacts. Please try again.");
-        }
-    }, [showToast]);
+            },
+            [showToast]
+        );
 
     // ─────────────────────────────
     // Delete Chat
     // ─────────────────────────────
 
-    const deleteChat = useCallback(async (number) => {
-        try {
-            const updated = recentChats.filter(
-                (item) => item.number !== number
-            );
-            setRecentChats(updated);
-            await setDataWithTimestamp("@recent-chat-data", updated);
-            showToast("Chat removed");
-        } catch (error) {
-            console.log(error);
-        }
-    }, [recentChats, showToast]);
+    const deleteChat =
+        useCallback(
+            async (number) => {
+                try {
+                    const updated =
+                        recentChats.filter(
+                            (
+                                item
+                            ) =>
+                                item.number !==
+                                number
+                        );
 
-    // ─────────────────────────────
-    // Delete Confirm
-    // ─────────────────────────────
+                    setRecentChats(
+                        updated
+                    );
 
-    const confirmDelete = useCallback((number) => {
-        Alert.alert(
-            "Remove Chat",
-            `Remove +91 ${number} from recents?`,
+                    await setDataWithTimestamp(
+                        "@recent-chat-data",
+                        updated
+                    );
+
+                    showToast(
+                        "Chat removed"
+                    );
+                } catch (error) {
+                    console.log(
+                        error
+                    );
+                }
+            },
             [
-                { text: "Cancel", style: "cancel" },
-                {
-                    text: "Remove",
-                    style: "destructive",
-                    onPress: () => deleteChat(number),
-                },
+                recentChats,
+                showToast,
             ]
         );
-    }, [deleteChat]);
 
     // ─────────────────────────────
-    // Loading State
+    // Confirm Delete
+    // ─────────────────────────────
+
+    const confirmDelete =
+        useCallback(
+            (number) => {
+                Alert.alert(
+                    "Remove Chat",
+                    `Remove +91 ${number} from recents?`,
+                    [
+                        {
+                            text: "Cancel",
+                            style:
+                                "cancel",
+                        },
+
+                        {
+                            text: "Remove",
+
+                            style:
+                                "destructive",
+
+                            onPress:
+                                () =>
+                                    deleteChat(
+                                        number
+                                    ),
+                        },
+                    ]
+                );
+            },
+            [deleteChat]
+        );
+
+    // ─────────────────────────────
+    // Skeleton Loader
+    // ─────────────────────────────
+
+    const SkeletonItem = () => {
+        const anim =
+            useRef(
+                new Animated.Value(
+                    0.4
+                )
+            ).current;
+
+        useEffect(() => {
+            Animated.loop(
+                Animated.sequence(
+                    [
+                        Animated.timing(
+                            anim,
+                            {
+                                toValue: 1,
+                                duration: 800,
+                                useNativeDriver:
+                                    true,
+                            }
+                        ),
+
+                        Animated.timing(
+                            anim,
+                            {
+                                toValue: 0.4,
+                                duration: 800,
+                                useNativeDriver:
+                                    true,
+                            }
+                        ),
+                    ]
+                )
+            ).start();
+        }, []);
+
+        return (
+            <Animated.View
+                style={{
+                    marginHorizontal: 12,
+
+                    marginBottom: 10,
+
+                    backgroundColor:
+                        COLORS.surface,
+
+                    borderWidth: 1,
+
+                    borderColor:
+                        COLORS.border,
+
+                    borderRadius: 22,
+
+                    paddingHorizontal: 14,
+
+                    paddingVertical: 14,
+
+                    flexDirection:
+                        "row",
+
+                    alignItems:
+                        "center",
+
+                    opacity: anim,
+                }}
+            >
+                <View
+                    style={{
+                        width: 58,
+                        height: 58,
+
+                        borderRadius: 29,
+
+                        backgroundColor:
+                            COLORS.skeleton,
+                    }}
+                />
+
+                <View
+                    style={{
+                        flex: 1,
+
+                        marginLeft: 14,
+
+                        gap: 10,
+                    }}
+                >
+                    <View
+                        style={{
+                            width: "60%",
+
+                            height: 18,
+
+                            borderRadius: 8,
+
+                            backgroundColor:
+                                COLORS.skeleton,
+                        }}
+                    />
+
+                    <View
+                        style={{
+                            width: "40%",
+
+                            height: 13,
+
+                            borderRadius: 6,
+
+                            backgroundColor:
+                                COLORS.skeleton,
+                        }}
+                    />
+                </View>
+            </Animated.View>
+        );
+    };
+
+    // ─────────────────────────────
+    // Loading
     // ─────────────────────────────
 
     if (loading) {
         return (
-            <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
-                <View
-                    style={{
-                        paddingHorizontal: 18,
-                        paddingTop: 18,
-                        paddingBottom: 14,
-                    }}
-                >
-                    <Text
-                        style={{
-                            fontSize: 16,
-                            color: COLORS.subtext,
-                        }}
-                    >
-                        Quickly reopen your WhatsApp chats
-                    </Text>
-                </View>
-                {[1, 2, 3, 4].map((i) => (
-                    <SkeletonItem key={i} />
-                ))}
+            <View
+                style={{
+                    flex: 1,
+
+                    backgroundColor:
+                        COLORS.bg,
+                }}
+            >
+                {[1, 2, 3, 4].map(
+                    (i) => (
+                        <SkeletonItem
+                            key={i}
+                        />
+                    )
+                )}
             </View>
         );
     }
@@ -410,15 +689,24 @@ const RecentList = () => {
     // Empty State
     // ─────────────────────────────
 
-    if (sortedChats.length === 0) {
+    if (
+        sortedChats.length === 0
+    ) {
         return (
             <View
                 style={{
                     flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
+
+                    justifyContent:
+                        "center",
+
+                    alignItems:
+                        "center",
+
                     paddingHorizontal: 24,
-                    backgroundColor: COLORS.bg,
+
+                    backgroundColor:
+                        COLORS.bg,
                 }}
             >
                 <Image
@@ -426,15 +714,22 @@ const RecentList = () => {
                     style={{
                         width: 220,
                         height: 220,
-                        resizeMode: "contain",
+
+                        resizeMode:
+                            "contain",
                     }}
                 />
 
                 <Text
                     style={{
                         fontSize: 24,
-                        fontWeight: "700",
-                        color: COLORS.text,
+
+                        fontWeight:
+                            "700",
+
+                        color:
+                            COLORS.text,
+
                         marginTop: 10,
                     }}
                 >
@@ -444,13 +739,20 @@ const RecentList = () => {
                 <Text
                     style={{
                         marginTop: 8,
-                        textAlign: "center",
+
+                        textAlign:
+                            "center",
+
                         fontSize: 14,
+
                         lineHeight: 22,
-                        color: COLORS.subtext,
+
+                        color:
+                            COLORS.subtext,
                     }}
                 >
-                    Your recent WhatsApp chats will appear here.
+                    Your recent chats
+                    will appear here.
                 </Text>
             </View>
         );
@@ -460,81 +762,159 @@ const RecentList = () => {
     // Render Item
     // ─────────────────────────────
 
-    const renderItem = ({ item }) => (
+    const renderItem = ({
+        item,
+    }) => (
         <TouchableOpacity
             activeOpacity={0.75}
-            onPress={() => openChat(item.number)}
+            onPress={() =>
+                openChat(
+                    item.number
+                )
+            }
             style={{
                 marginHorizontal: 12,
+
                 marginBottom: 10,
-                backgroundColor: COLORS.surface,
+
+                backgroundColor:
+                    COLORS.surface,
+
+                borderWidth: 1,
+
+                borderColor:
+                    COLORS.border,
+
                 borderRadius: 22,
+
                 paddingHorizontal: 14,
+
                 paddingVertical: 14,
-                flexDirection: "row",
-                alignItems: "center",
+
+                flexDirection:
+                    "row",
+
+                alignItems:
+                    "center",
+
+                shadowColor:
+                    "#000",
+
+                shadowOffset: {
+                    width: 0,
+                    height: 6,
+                },
+
+                shadowOpacity:
+                    isDark
+                        ? 0.25
+                        : 0.08,
+
+                shadowRadius: 14,
+
+                elevation: 8,
             }}
         >
-            {/* Avatar */}
             <Avatar.Icon
                 size={58}
                 icon="account"
-                color={COLORS.avatarIcon}
-                style={{ backgroundColor: COLORS.avatarBg }}
+                color={
+                    COLORS.avatarIcon
+                }
+                style={{
+                    backgroundColor:
+                        COLORS.avatarBg,
+                }}
             />
 
-            {/* Info */}
-            <View style={{ flex: 1, marginLeft: 14 }}>
+            <View
+                style={{
+                    flex: 1,
+
+                    marginLeft: 14,
+                }}
+            >
                 <Text
                     numberOfLines={1}
                     style={{
                         fontSize: 20,
-                        fontWeight: "600",
-                        color: COLORS.text,
+
+                        fontWeight:
+                            "600",
+
+                        color:
+                            COLORS.text,
                     }}
                 >
-                    +91 {item.number}
+                    +91{" "}
+                    {item.number}
                 </Text>
 
                 <Text
                     style={{
                         fontSize: 14,
-                        color: COLORS.subtext,
+
+                        color:
+                            COLORS.subtext,
+
                         marginTop: 4,
                     }}
                 >
-                    Open WhatsApp Chat
+                    Open WhatsApp
+                    Chat
                 </Text>
             </View>
 
-            {/* Right Side */}
             <View
                 style={{
-                    alignItems: "flex-end",
-                    justifyContent: "space-between",
+                    alignItems:
+                        "flex-end",
+
+                    justifyContent:
+                        "space-between",
+
                     height: 58,
                 }}
             >
                 <Text
                     style={{
                         fontSize: 12,
-                        color: COLORS.subtext,
-                        fontWeight: "500",
+
+                        color:
+                            COLORS.subtext,
+
+                        fontWeight:
+                            "500",
                     }}
                 >
-                    {formatDate(item.timestamp)}
+                    {formatDate(
+                        item.timestamp
+                    )}
                 </Text>
 
                 <Menu
-                    visible={menuVisible === item.number}
-                    onDismiss={closeMenu}
+                    visible={
+                        menuVisible ===
+                        item.number
+                    }
+                    onDismiss={
+                        closeMenu
+                    }
                     anchor={
                         <IconButton
                             icon="dots-vertical"
                             size={20}
-                            iconColor={COLORS.subtext}
-                            style={{ margin: 0 }}
-                            onPress={() => openMenu(item.number)}
+                            iconColor={
+                                COLORS.subtext
+                            }
+                            style={{
+                                margin: 0,
+                            }}
+                            onPress={() =>
+                                openMenu(
+                                    item.number
+                                )
+                            }
                         />
                     }
                 >
@@ -543,7 +923,10 @@ const RecentList = () => {
                         title="Save to Contacts"
                         onPress={() => {
                             closeMenu();
-                            saveToContacts(item.number);
+
+                            saveToContacts(
+                                item.number
+                            );
                         }}
                     />
 
@@ -552,7 +935,10 @@ const RecentList = () => {
                         title="Copy Number"
                         onPress={() => {
                             closeMenu();
-                            copyNumber(item.number);
+
+                            copyNumber(
+                                item.number
+                            );
                         }}
                     />
 
@@ -561,10 +947,16 @@ const RecentList = () => {
                     <Menu.Item
                         leadingIcon="delete-outline"
                         title="Remove"
-                        titleStyle={{ color: COLORS.danger }}
+                        titleStyle={{
+                            color:
+                                COLORS.danger,
+                        }}
                         onPress={() => {
                             closeMenu();
-                            confirmDelete(item.number);
+
+                            confirmDelete(
+                                item.number
+                            );
                         }}
                     />
                 </Menu>
@@ -577,51 +969,99 @@ const RecentList = () => {
     // ─────────────────────────────
 
     const ToastBar = () => {
-        const opacity = useRef(new Animated.Value(0)).current;
+        const opacity =
+            useRef(
+                new Animated.Value(
+                    0
+                )
+            ).current;
 
         useEffect(() => {
-            if (toast.visible) {
-                Animated.sequence([
-                    Animated.timing(opacity, {
-                        toValue: 1,
-                        duration: 200,
-                        useNativeDriver: true,
-                    }),
-                    Animated.delay(1800),
-                    Animated.timing(opacity, {
-                        toValue: 0,
-                        duration: 300,
-                        useNativeDriver: true,
-                    }),
-                ]).start();
-            }
-        }, [toast.visible, toast.message]);
+            if (
+                toast.visible
+            ) {
+                Animated.sequence(
+                    [
+                        Animated.timing(
+                            opacity,
+                            {
+                                toValue: 1,
+                                duration: 200,
+                                useNativeDriver:
+                                    true,
+                            }
+                        ),
 
-        if (!toast.visible) return null;
+                        Animated.delay(
+                            1800
+                        ),
+
+                        Animated.timing(
+                            opacity,
+                            {
+                                toValue: 0,
+                                duration: 300,
+                                useNativeDriver:
+                                    true,
+                            }
+                        ),
+                    ]
+                ).start();
+            }
+        }, [
+            toast.visible,
+            toast.message,
+        ]);
+
+        if (!toast.visible)
+            return null;
 
         return (
             <Animated.View
                 style={{
-                    position: "absolute",
+                    position:
+                        "absolute",
+
                     bottom: 28,
-                    alignSelf: "center",
-                    backgroundColor: "#1F2937",
+
+                    alignSelf:
+                        "center",
+
+                    backgroundColor:
+                        COLORS.toastBg,
+
                     paddingHorizontal: 20,
+
                     paddingVertical: 12,
+
                     borderRadius: 100,
+
                     opacity,
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 4 },
+
+                    shadowColor:
+                        "#000",
+
+                    shadowOffset: {
+                        width: 0,
+                        height: 4,
+                    },
+
                     shadowOpacity: 0.2,
+
                     shadowRadius: 8,
+
                     elevation: 6,
                 }}
             >
                 <Text
                     style={{
-                        color: "#FFFFFF",
+                        color:
+                            "#FFFFFF",
+
                         fontSize: 14,
-                        fontWeight: "500",
+
+                        fontWeight:
+                            "500",
                     }}
                 >
                     {toast.message}
@@ -635,52 +1075,103 @@ const RecentList = () => {
     // ─────────────────────────────
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
-            {/* Header */}
+        <View
+            style={{
+                flex: 1,
+
+                backgroundColor:
+                    COLORS.bg,
+            }}
+        >
+            {/* HEADER */}
+
             <View
                 style={{
                     paddingHorizontal: 18,
+
                     paddingTop: 18,
+
                     paddingBottom: 14,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
+
+                    flexDirection:
+                        "row",
+
+                    alignItems:
+                        "center",
+
+                    justifyContent:
+                        "space-between",
                 }}
             >
-                <Text style={{ fontSize: 16, color: COLORS.subtext }}>
-                    Quickly reopen your WhatsApp chats
+                <Text
+                    style={{
+                        fontSize: 16,
+
+                        color:
+                            COLORS.subtext,
+                    }}
+                >
+                    Quickly reopen
+                    your WhatsApp
+                    chats
                 </Text>
 
                 <View
                     style={{
-                        backgroundColor: `${WHATSAPP_GREEN}18`,
+                        backgroundColor:
+                            isDark
+                                ? "rgba(0,168,132,0.15)"
+                                : `${WHATSAPP_GREEN}18`,
+
                         borderRadius: 10,
+
                         paddingHorizontal: 10,
+
                         paddingVertical: 4,
                     }}
                 >
                     <Text
                         style={{
                             fontSize: 13,
-                            fontWeight: "700",
-                            color: WHATSAPP_GREEN,
+
+                            fontWeight:
+                                "700",
+
+                            color:
+                                WHATSAPP_GREEN,
                         }}
                     >
-                        {sortedChats.length}
+                        {
+                            sortedChats.length
+                        }
                     </Text>
                 </View>
             </View>
 
-            {/* List */}
+            {/* LIST */}
+
             <FlatList
                 data={sortedChats}
-                keyExtractor={(item) => item.number}
-                renderItem={renderItem}
-                contentContainerStyle={{ paddingBottom: 32 }}
-                showsVerticalScrollIndicator={false}
+                keyExtractor={(
+                    item
+                ) =>
+                    item.number
+                }
+                renderItem={
+                    renderItem
+                }
+                contentContainerStyle={{
+                    paddingBottom: 32,
+
+                    paddingTop: 4,
+                }}
+                showsVerticalScrollIndicator={
+                    false
+                }
             />
 
-            {/* Toast */}
+            {/* TOAST */}
+
             <ToastBar />
         </View>
     );
