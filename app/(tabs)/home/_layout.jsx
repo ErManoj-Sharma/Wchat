@@ -22,7 +22,7 @@ const StackLayout = () => {
             <Stack.Screen
                 name='index'
                 options={{
-                    title: "WhatsApp Direct Chat"
+                    title: "Direct Chat"
 
                 }}
             />
