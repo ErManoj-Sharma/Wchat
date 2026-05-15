@@ -1,12 +1,22 @@
-import { View } from 'react-native'
-import React from 'react'
-import RecentList from '../../../components/RecentList'
-const page = () => {
-    return (
-        <View className="bg-white flex-1 ">
-            <RecentList/>
-        </View>
-    )
-}
 
-export default page
+import React from "react";
+
+import { View } from "react-native";
+
+import RecentList from "../../../components/RecentList";
+
+const Page = () => {
+    return (
+        <View
+            style={{
+                flex: 1,
+                backgroundColor:
+                    "#F8FAFC",
+            }}
+        >
+            <RecentList />
+        </View>
+    );
+};
+
+export default Page;
