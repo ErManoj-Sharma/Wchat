@@ -7,7 +7,6 @@ import AboutAppModal from "./../components/AboutAppModal";
 import { useRouter } from "expo-router";
 
 const HeaderMenu = ({ theme, isDark, toggleTheme }) => {
-    const WHATSAPP_GREEN = "#1DAA61";
     const [menuVisible, setMenuVisible] = useState(false);
     const [aboutVisible, setAboutVisible] = useState(false);
     const router = useRouter();
@@ -29,7 +28,7 @@ const HeaderMenu = ({ theme, isDark, toggleTheme }) => {
                             style={{
                                 width: 22,
                                 height: 22,
-                                tintColor: isDark ? WHATSAPP_GREEN : WHATSAPP_GREEN
+                                tintColor: theme.colors.primary
                             }}
                         />
                     </TouchableOpacity>
@@ -41,6 +40,11 @@ const HeaderMenu = ({ theme, isDark, toggleTheme }) => {
             >
                 <Menu.Item
                     leadingIcon="theme-light-dark"
+                    theme={{
+                        colors: {
+                            onSurfaceVariant: isDark ? "#fff" : "#000",
+                        },
+                    }}
                     title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
                     titleStyle={{ color: theme.colors.text }}
                     onPress={() => {
@@ -51,6 +55,11 @@ const HeaderMenu = ({ theme, isDark, toggleTheme }) => {
 
                 <Menu.Item
                     leadingIcon="information-outline"
+                    theme={{
+                        colors: {
+                            onSurfaceVariant: isDark ? "#fff" : "#000",
+                        },
+                    }}
                     title="About App"
                     titleStyle={{ color: theme.colors.text }}
                     onPress={() => {
@@ -59,15 +68,6 @@ const HeaderMenu = ({ theme, isDark, toggleTheme }) => {
                     }}
                 />
 
-                <Menu.Item
-                    leadingIcon="refresh"
-                    title="Show Onboarding Again"
-                    titleStyle={{ color: theme.colors.text }}
-                    onPress={() => {
-                        closeMenu();
-                        router.push("/onboarding-test");
-                    }}
-                />
             </Menu>
 
             <AboutAppModal

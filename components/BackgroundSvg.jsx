@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, useColorScheme } from 'react-native';
+import { View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { backgroundSvgXml } from '../assets/images';
+import { useAppTheme } from '../constants/theme';
 
 const BackgroundSvg = () => {
-  const isDark = useColorScheme() === 'dark';
-  const color = isDark ? '#334155' : '#E5E7EB';
-  const xml = backgroundSvgXml.replace(/COLOR_PLACEHOLDER/g, color);
+  const { colors } = useAppTheme();
+  const xml = backgroundSvgXml.replace(/COLOR_PLACEHOLDER/g, colors.svgStroke);
 
   return (
     <View

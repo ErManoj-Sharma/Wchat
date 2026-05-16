@@ -1,101 +1,49 @@
-// app/(tabs)/_layout.jsx for WChat app
-
 import React from "react";
+import { Appearance } from "react-native";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useColorScheme } from "nativewind";
 import HeaderMenu from "../../components/HeaderMenu";
-
-const WHATSAPP_GREEN = "#1DAA61";
-
-const LightTheme = {
-  colors: {
-    background: "#F8FAFC",
-    surface: "#FFFFFF",
-
-    text: "#0F172A",
-
-    outline: "#E5E7EB",
-
-    onSurfaceVariant:
-      "#64748B",
-
-    primary:
-      WHATSAPP_GREEN,
-
-    card: "#FFFFFF",
-
-    inputBackground:
-      "#FFFFFF",
-  },
-};
-
-const DarkTheme = {
-  colors: {
-    // Main backgrounds
-    background: "#0F172A",
-
-    surface: "#111827",
-
-    // Main text
-    text: "#F9FAFB",
-
-    // Borders
-    outline: "#374151",
-
-    // Secondary text
-    onSurfaceVariant:
-      "#9CA3AF",
-
-    // Brand
-    primary:
-      WHATSAPP_GREEN,
-
-    // Cards
-    card: "#1E293B",
-
-    // Inputs
-    inputBackground:
-      "#111827",
-  },
-};
+import { useAppTheme } from "../../constants/theme";
 
 export default function TabLayout() {
   const { colorScheme, setColorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const theme = isDark ? DarkTheme : LightTheme;
+  const nwIsDark = colorScheme === "dark";
+  const { isDark, colors } = useAppTheme({ isDark: nwIsDark });
 
-  const toggleTheme = () => setColorScheme(isDark ? "light" : "dark");
+  const toggleTheme = () => {
+    const next = isDark ? "light" : "dark";
+    setColorScheme(next);
+    Appearance.setColorScheme(next);
+  };
 
   return (
     <Tabs
       screenOptions={{
         headerShown: true,
-        // ─── Header styling ───
         headerStyle: {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: colors.surface,
           shadowColor: "#3ddb92",
         },
         headerTitleStyle: {
           fontSize: 24,
           fontWeight: "bold",
-          color: WHATSAPP_GREEN,
+          color: colors.primary,
         },
-        headerTintColor: theme.colors.text,
+        headerTintColor: colors.text,
         headerRight: () => (
           <HeaderMenu
-            theme={theme}
+            theme={{ colors }}
             isDark={isDark}
             toggleTheme={toggleTheme}
           />
         ),
-        // ─── Tab bar styling ───
-        tabBarActiveTintColor: WHATSAPP_GREEN,
-        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.onSurfaceVariant,
         tabBarStyle: {
-          backgroundColor: theme.colors.surface,
-          borderTopColor: theme.colors.outline,
+          backgroundColor: colors.surface,
+          borderTopColor: colors.outline,
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -111,7 +59,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? "chatbubbles" : "chatbubbles-outline"}
               size={24}
-              color={focused ? WHATSAPP_GREEN : theme.colors.onSurfaceVariant}
+              color={focused ? colors.primary : colors.onSurfaceVariant}
             />
           ),
         }}
@@ -125,7 +73,7 @@ export default function TabLayout() {
             <MaterialIcons
               name="history"
               size={24}
-              color={focused ? WHATSAPP_GREEN : theme.colors.onSurfaceVariant}
+              color={focused ? colors.primary : colors.onSurfaceVariant}
             />
           ),
         }}
