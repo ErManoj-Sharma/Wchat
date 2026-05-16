@@ -14,7 +14,6 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     ScrollView,
-    useColorScheme,
 } from "react-native";
 
 import {
@@ -26,49 +25,14 @@ import {
 import * as IntentLauncher from "expo-intent-launcher";
 
 import { saveRecentChat } from "../../../service/storage";
-
-const WHATSAPP_GREEN = "#00A884";
+import BackgroundSvg from "../../../components/BackgroundSvg";
+import { useAppTheme } from "../../../constants/theme";
 
 const Home = () => {
     const [number, setNumber] =
         useState("");
 
-    const colorScheme =
-        useColorScheme();
-
-    const isDark =
-        colorScheme === "dark";
-
-    // ─────────────────────────────
-    // Theme
-    // ─────────────────────────────
-
-    const theme = {
-        background: isDark
-            ? "#0F172A"
-            : "#F8FAFC",
-
-        card: isDark
-            ? "#1E293B"
-            : "#FFFFFF",
-
-        text: isDark
-            ? "#F9FAFB"
-            : "#0F172A",
-
-        secondaryText: isDark
-            ? "#94A3B8"
-            : "#64748B",
-
-        border: isDark
-            ? "#334155"
-            : "#E5E7EB",
-
-        inputBackground:
-            isDark
-                ? "#111827"
-                : "#FFFFFF",
-    };
+    const { isDark, colors } = useAppTheme();
 
     // ─────────────────────────────
     // Back Handler
@@ -180,9 +144,10 @@ const Home = () => {
                 flex: 1,
 
                 backgroundColor:
-                    theme.background,
+                    colors.background,
             }}
         >
+            <BackgroundSvg />
             <TouchableWithoutFeedback
                 onPress={
                     Keyboard.dismiss
@@ -219,7 +184,7 @@ const Home = () => {
                                     "800",
 
                                 color:
-                                    WHATSAPP_GREEN,
+                                    colors.primary,
 
                                 letterSpacing:
                                     -0.8,
@@ -238,7 +203,7 @@ const Home = () => {
                                 marginTop: 10,
 
                                 color:
-                                    theme.secondaryText,
+                                    colors.secondaryText,
 
                                 lineHeight: 24,
 
@@ -260,7 +225,7 @@ const Home = () => {
                     <View
                         style={{
                             backgroundColor:
-                                theme.card,
+                                colors.card,
 
                             borderRadius: 30,
 
@@ -269,7 +234,7 @@ const Home = () => {
                             borderWidth: 1,
 
                             borderColor:
-                                theme.border,
+                                colors.border,
 
                             shadowColor:
                                 "#000",
@@ -306,30 +271,30 @@ const Home = () => {
                                 fontSize: 17,
 
                                 color:
-                                    theme.text,
+                                    colors.text,
                             }}
                             style={{
                                 backgroundColor:
-                                    theme.inputBackground,
+                                    colors.inputBackground,
                             }}
                             theme={{
                                 dark: isDark,
 
                                 colors: {
                                     primary:
-                                        WHATSAPP_GREEN,
+                                        colors.primary,
 
                                     text:
-                                        theme.text,
+                                        colors.text,
 
                                     placeholder:
-                                        theme.secondaryText,
+                                        colors.secondaryText,
 
                                     background:
-                                        theme.inputBackground,
+                                        colors.inputBackground,
 
                                     outline:
-                                        theme.border,
+                                        colors.border,
                                 },
                             }}
                         />
@@ -343,8 +308,8 @@ const Home = () => {
                                 fontSize: 13,
 
                                 color: isValid
-                                    ? "#22C55E"
-                                    : theme.secondaryText,
+                                    ? colors.success
+                                    : colors.secondaryText,
                             }}
                         >
                             {isValid
@@ -370,7 +335,7 @@ const Home = () => {
                                 borderRadius: 18,
 
                                 backgroundColor:
-                                    WHATSAPP_GREEN,
+                                    colors.primary,
                             }}
                             labelStyle={{
                                 fontSize: 16,
@@ -399,7 +364,7 @@ const Home = () => {
                             fontSize: 12,
 
                             color:
-                                theme.secondaryText,
+                                colors.secondaryText,
 
                             lineHeight: 20,
                         }}

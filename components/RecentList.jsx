@@ -6,7 +6,7 @@ import React, {
     useState,
 } from "react";
 
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 
 import {
     View,
@@ -18,7 +18,6 @@ import {
     Alert,
     Animated,
     Platform,
-    useColorScheme,
 } from "react-native";
 
 import {
@@ -37,62 +36,12 @@ import {
     setDataWithTimestamp,
     saveRecentChat,
 } from "../service/storage";
+import { useAppTheme } from "../constants/theme";
 
-const WHATSAPP_GREEN = "#00A884";
+const WHATSAPP_GREEN = "#25D366";
 
 const RecentList = () => {
-    const colorScheme =
-        useColorScheme();
-
-    const isDark =
-        colorScheme === "dark";
-
-    // ─────────────────────────────
-    // Theme
-    // ─────────────────────────────
-
-    const COLORS = {
-        bg: isDark
-            ? "#0F172A"
-            : "#FFFFFF",
-
-        surface: isDark
-            ? "#1E293B"
-            : "#F3F4F6",
-
-        border: isDark
-            ? "#334155"
-            : "#E5E7EB",
-
-        primary:
-            WHATSAPP_GREEN,
-
-        text: isDark
-            ? "#F8FAFC"
-            : "#111827",
-
-        subtext: isDark
-            ? "#94A3B8"
-            : "#6B7280",
-
-        danger: "#EF4444",
-
-        avatarBg: isDark
-            ? "#111827"
-            : "#ECECEC",
-
-        avatarIcon: isDark
-            ? "#CBD5E1"
-            : "#6B7280",
-
-        skeleton: isDark
-            ? "#1E293B"
-            : "#E5E7EB",
-
-        toastBg: isDark
-            ? "#020617"
-            : "#1F2937",
-    };
+    const { isDark, colors } = useAppTheme();
 
     // ─────────────────────────────
     // State
@@ -587,12 +536,12 @@ const RecentList = () => {
                     marginBottom: 10,
 
                     backgroundColor:
-                        COLORS.surface,
+                        colors.surface,
 
                     borderWidth: 1,
 
                     borderColor:
-                        COLORS.border,
+                        colors.border,
 
                     borderRadius: 22,
 
@@ -617,7 +566,7 @@ const RecentList = () => {
                         borderRadius: 29,
 
                         backgroundColor:
-                            COLORS.skeleton,
+                            colors.skeleton,
                     }}
                 />
 
@@ -639,7 +588,7 @@ const RecentList = () => {
                             borderRadius: 8,
 
                             backgroundColor:
-                                COLORS.skeleton,
+                                colors.skeleton,
                         }}
                     />
 
@@ -652,7 +601,7 @@ const RecentList = () => {
                             borderRadius: 6,
 
                             backgroundColor:
-                                COLORS.skeleton,
+                                colors.skeleton,
                         }}
                     />
                 </View>
@@ -669,9 +618,6 @@ const RecentList = () => {
             <View
                 style={{
                     flex: 1,
-
-                    backgroundColor:
-                        COLORS.bg,
                 }}
             >
                 {[1, 2, 3, 4].map(
@@ -704,9 +650,6 @@ const RecentList = () => {
                         "center",
 
                     paddingHorizontal: 24,
-
-                    backgroundColor:
-                        COLORS.bg,
                 }}
             >
                 <Image
@@ -728,7 +671,7 @@ const RecentList = () => {
                             "700",
 
                         color:
-                            COLORS.text,
+                            colors.text,
 
                         marginTop: 10,
                     }}
@@ -748,7 +691,7 @@ const RecentList = () => {
                         lineHeight: 22,
 
                         color:
-                            COLORS.subtext,
+                            colors.subtext,
                     }}
                 >
                     Your recent chats
@@ -778,12 +721,12 @@ const RecentList = () => {
                 marginBottom: 10,
 
                 backgroundColor:
-                    COLORS.surface,
+                    colors.card,
 
                 borderWidth: 1,
 
                 borderColor:
-                    COLORS.border,
+                    colors.border,
 
                 borderRadius: 22,
 
@@ -819,11 +762,11 @@ const RecentList = () => {
                 size={58}
                 icon="account"
                 color={
-                    COLORS.avatarIcon
+                    colors.avatarIcon
                 }
                 style={{
                     backgroundColor:
-                        COLORS.avatarBg,
+                        colors.avatarBg,
                 }}
             />
 
@@ -843,7 +786,7 @@ const RecentList = () => {
                             "600",
 
                         color:
-                            COLORS.text,
+                            colors.text,
                     }}
                 >
                     +91{" "}
@@ -855,7 +798,7 @@ const RecentList = () => {
                         fontSize: 14,
 
                         color:
-                            COLORS.subtext,
+                            colors.subtext,
 
                         marginTop: 4,
                     }}
@@ -881,7 +824,7 @@ const RecentList = () => {
                         fontSize: 12,
 
                         color:
-                            COLORS.subtext,
+                            colors.subtext,
 
                         fontWeight:
                             "500",
@@ -905,7 +848,7 @@ const RecentList = () => {
                             icon="dots-vertical"
                             size={20}
                             iconColor={
-                                COLORS.subtext
+                                colors.subtext
                             }
                             style={{
                                 margin: 0,
@@ -917,10 +860,26 @@ const RecentList = () => {
                             }
                         />
                     }
+                    contentStyle={{
+                        backgroundColor:
+                            colors.surface,
+                        borderRadius: 12,
+                    }}
                 >
                     <Menu.Item
                         leadingIcon="account-plus"
                         title="Save to Contacts"
+                        theme={{
+                            colors: {
+                                onSurfaceVariant:
+                                    isDark
+                                        ? "#fff"
+                                        : "#000",
+                            },
+                        }}
+                        titleStyle={{
+                            color: colors.text,
+                        }}
                         onPress={() => {
                             closeMenu();
 
@@ -933,6 +892,17 @@ const RecentList = () => {
                     <Menu.Item
                         leadingIcon="content-copy"
                         title="Copy Number"
+                        theme={{
+                            colors: {
+                                onSurfaceVariant:
+                                    isDark
+                                        ? "#fff"
+                                        : "#000",
+                            },
+                        }}
+                        titleStyle={{
+                            color: colors.text,
+                        }}
                         onPress={() => {
                             closeMenu();
 
@@ -947,9 +917,17 @@ const RecentList = () => {
                     <Menu.Item
                         leadingIcon="delete-outline"
                         title="Remove"
+                        theme={{
+                            colors: {
+                                onSurfaceVariant:
+                                    isDark
+                                        ? "#fff"
+                                        : "#000",
+                            },
+                        }}
                         titleStyle={{
                             color:
-                                COLORS.danger,
+                                colors.danger,
                         }}
                         onPress={() => {
                             closeMenu();
@@ -1028,7 +1006,7 @@ const RecentList = () => {
                         "center",
 
                     backgroundColor:
-                        COLORS.toastBg,
+                        colors.toastBg,
 
                     paddingHorizontal: 20,
 
@@ -1078,9 +1056,6 @@ const RecentList = () => {
         <View
             style={{
                 flex: 1,
-
-                backgroundColor:
-                    COLORS.bg,
             }}
         >
             {/* HEADER */}
@@ -1108,7 +1083,7 @@ const RecentList = () => {
                         fontSize: 16,
 
                         color:
-                            COLORS.subtext,
+                            colors.primary,
                     }}
                 >
                     Quickly reopen
