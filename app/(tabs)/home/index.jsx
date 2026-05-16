@@ -26,8 +26,9 @@ import {
 import * as IntentLauncher from "expo-intent-launcher";
 
 import { saveRecentChat } from "../../../service/storage";
+import BackgroundSvg from "../../../components/BackgroundSvg";
 
-const WHATSAPP_GREEN = "#00A884";
+const WHATSAPP_GREEN = "#1DAA61";
 
 const Home = () => {
     const [number, setNumber] =
@@ -183,6 +184,7 @@ const Home = () => {
                     theme.background,
             }}
         >
+            <BackgroundSvg />
             <TouchableWithoutFeedback
                 onPress={
                     Keyboard.dismiss

@@ -38,7 +38,7 @@ import {
     saveRecentChat,
 } from "../service/storage";
 
-const WHATSAPP_GREEN = "#00A884";
+const WHATSAPP_GREEN = "#1DAA61";
 
 const RecentList = () => {
     const colorScheme =
@@ -52,10 +52,6 @@ const RecentList = () => {
     // ─────────────────────────────
 
     const COLORS = {
-        bg: isDark
-            ? "#0F172A"
-            : "#FFFFFF",
-
         surface: isDark
             ? "#1E293B"
             : "#F3F4F6",
@@ -669,9 +665,6 @@ const RecentList = () => {
             <View
                 style={{
                     flex: 1,
-
-                    backgroundColor:
-                        COLORS.bg,
                 }}
             >
                 {[1, 2, 3, 4].map(
@@ -704,9 +697,6 @@ const RecentList = () => {
                         "center",
 
                     paddingHorizontal: 24,
-
-                    backgroundColor:
-                        COLORS.bg,
                 }}
             >
                 <Image
@@ -1078,9 +1068,6 @@ const RecentList = () => {
         <View
             style={{
                 flex: 1,
-
-                backgroundColor:
-                    COLORS.bg,
             }}
         >
             {/* HEADER */}

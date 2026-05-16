@@ -7,7 +7,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useColorScheme } from "nativewind";
 import HeaderMenu from "../../components/HeaderMenu";
 
-const WHATSAPP_GREEN = "#008068";
+const WHATSAPP_GREEN = "#1DAA61";
 
 const LightTheme = {
   colors: {

@@ -4,11 +4,13 @@ import { View, TouchableOpacity, Image } from "react-native";
 import { Menu } from "react-native-paper";
 import { IMAGES } from "./../assets/images";
 import AboutAppModal from "./../components/AboutAppModal";
+import { useRouter } from "expo-router";
 
 const HeaderMenu = ({ theme, isDark, toggleTheme }) => {
-    const WHATSAPP_GREEN = "#008068";
+    const WHATSAPP_GREEN = "#1DAA61";
     const [menuVisible, setMenuVisible] = useState(false);
     const [aboutVisible, setAboutVisible] = useState(false);
+    const router = useRouter();
 
     const closeMenu = () => setMenuVisible(false);
 
@@ -54,6 +56,16 @@ const HeaderMenu = ({ theme, isDark, toggleTheme }) => {
                     onPress={() => {
                         closeMenu();
                         setTimeout(() => setAboutVisible(true), 300);
+                    }}
+                />
+
+                <Menu.Item
+                    leadingIcon="refresh"
+                    title="Show Onboarding Again"
+                    titleStyle={{ color: theme.colors.text }}
+                    onPress={() => {
+                        closeMenu();
+                        router.push("/onboarding-test");
                     }}
                 />
             </Menu>
