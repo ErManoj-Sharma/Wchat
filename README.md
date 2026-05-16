@@ -36,11 +36,37 @@ Built with privacy in mind: your contacts are never stored automatically.
 | **Dark Mode** | Toggle between light and dark themes |
 | **Privacy-First** | No contact data is stored or uploaded anywhere |
 
-### Screenshots
+## Screenshots
 
-| Onboarding | Direct Chat | Recent Chats | Actions Menu |
-|:---:|:---:|:---:|:---:|
-| <img src="./assets/images/1.png" width="180" /> | <img src="./assets/images/2.png" width="180" /> | <img src="./assets/images/3.png" width="180" /> | <img src="./assets/images/menu.png" width="180" /> |
+### Onboarding
+
+| Screen 1 | Screen 2 | Screen 3 |
+|:---:|:---:|:---:|
+| <img src="./assets/readme/onboard1.jpeg" width="180" /> | <img src="./assets/readme/onboard2.jpeg" width="180" /> | <img src="./assets/readme/onboard3.jpeg" width="180" /> |
+
+---
+
+### Home Tabs
+
+#### Light Mode
+
+| Direct Chat | Recent Chats |
+|:---:|:---:|
+| <img src="./assets/readme/main-light.jpeg" width="180" /> | <img src="./assets/readme/recent-light.jpeg" width="180" /> |
+
+#### Dark Mode
+
+| main Chat | Recent Chats |
+|:---:|:---:|
+| <img src="./assets/readme/main-dark.jpeg" width="180" /> | <img src="./assets/readme/recent-dark.jpeg" width="180" /> |
+
+---
+
+### Actions Menu
+
+| Menu |
+|:---:|
+| <img src="./assets/readme/menu.jpeg" width="180" /> |
 
 > _Note: Replace these with actual device screenshots for a polished README._
 
