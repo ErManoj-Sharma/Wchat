@@ -1,7 +1,7 @@
 import {  TouchableOpacity, View, Animated } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import Svg, { G, Circle } from 'react-native-svg';
-import { AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 const NextButton = ({ percentage, scrollTo }) => {
     const size = 128;
     const strokeWidth = 2;
@@ -50,7 +50,7 @@ const NextButton = ({ percentage, scrollTo }) => {
 
             </Svg>
             <TouchableOpacity onPress={scrollTo} className="absolute bg-green p-5 rounded-full"  activeOpacity={0.6}>
-                <AntDesign name='arrowright' size={32} color="#fff" />
+                <Ionicons name='arrow-forward' size={32} color="#fff" />
             </TouchableOpacity>
         </View>
     )
